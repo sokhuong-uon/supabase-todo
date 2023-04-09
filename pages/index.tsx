@@ -10,6 +10,18 @@ export default function Home() {
   const supabase = useSupabase();
 
   const { todos, setTodos } = useApplicationContext();
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>(todos);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const onSearchChange = (query: string) => {
+    setSearchQuery(query);
+
+    const filtered = todos.filter((todo) => {
+      return todo.task.toLowerCase().includes(query.toLowerCase());
+    });
+
+    setFilteredTodos(filtered);
+  };
 
   const { addTodo, deleteTodo, updateTodo, toggleTodo } = useTodo(todos);
 
@@ -79,22 +91,39 @@ export default function Home() {
           onCancelEdit={onCancelEdit}
           isEdit={isEdit}
           onEdit={onEdit}
+          onSearchChange={onSearchChange}
+          isEnableAddNew={filteredTodos.length === 0}
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <ul className="flex flex-col w-full h-full gap-2 ">
-          {todos.map((todo) => (
-            <li key={todo.id}>
-              <TodoCard
-                todo={todo}
-                onDelete={deleteTodo}
-                onEdit={prepareEdit}
-                onToggle={toggle}
-                key={todo.id}
-              ></TodoCard>
-            </li>
-          ))}
+          {searchQuery === "" &&
+            todos.map((todo) => (
+              <li key={todo.id}>
+                <TodoCard
+                  todo={todo}
+                  onDelete={deleteTodo}
+                  onEdit={prepareEdit}
+                  onToggle={toggle}
+                  key={todo.id}
+                ></TodoCard>
+              </li>
+            ))}
+
+          {searchQuery !== "" &&
+            filteredTodos.map((todo) => (
+              <li key={todo.id}>
+                <TodoCard
+                  todo={todo}
+                  onDelete={deleteTodo}
+                  onEdit={prepareEdit}
+                  onToggle={toggle}
+                  key={todo.id}
+                ></TodoCard>
+              </li>
+            ))}
+          {searchQuery !== "" && filteredTodos.length === 0 && <li>No match found</li>}
         </ul>
       </div>
     </main>

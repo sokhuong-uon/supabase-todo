@@ -7,6 +7,8 @@ type InputBoxProps = {
   editingId: number | null;
   onEdit: (id: number, task: string) => void;
   onCancelEdit: () => void;
+  onSearchChange: (query: string) => void;
+  isEnableAddNew: boolean;
 };
 
 export const InputBox = ({
@@ -16,6 +18,8 @@ export const InputBox = ({
   editingId,
   onEdit,
   onCancelEdit,
+  onSearchChange,
+  isEnableAddNew,
 }: InputBoxProps) => {
   const inputElement = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -51,12 +55,17 @@ export const InputBox = ({
         setError("Please enter a task");
       }
     }
+
+    // after submit, reset the search query
+    onSearchChange("");
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (error !== null) {
       setError(null);
     }
+
+    onSearchChange(e.target.value);
 
     if (e.target.value !== "") {
       setIsTodoValid(true);
@@ -105,7 +114,7 @@ export const InputBox = ({
       {!isEdit && (
         <button
           type="submit"
-          disabled={!isTodoValid}
+          disabled={!isTodoValid && !isEnableAddNew}
           className="w-24 h-full bg-teal-600 rounded-md disabled:opacity-60"
         >
           Add
