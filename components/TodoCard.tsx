@@ -13,6 +13,7 @@ export const TodoCard = ({ todo, onDelete, onEdit, onToggle }: TodoCardProps) =>
   };
 
   const editItem = () => {
+    if (todo.is_done) return alert("You can't edit a completed task");
     onEdit(todo.id);
   };
 

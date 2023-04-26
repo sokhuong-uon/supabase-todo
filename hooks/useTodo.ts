@@ -15,6 +15,9 @@ const useTodo = (todos: Todo[]) => {
   const fetchTodos = async () => {};
 
   const addTodo = async (task: string) => {
+    const todo = todos.find((todo) => todo.task === task);
+    if (todo) return alert("Task already exists");
+
     const { error } = await supabase.from("todo").insert({ task, is_done: false });
 
     if (error) {
@@ -31,6 +34,9 @@ const useTodo = (todos: Todo[]) => {
   };
 
   const updateTodo = async (id: number, task: string) => {
+    const todo = todos.find((todo) => todo.task === task);
+    if (todo) return alert("Task already exists");
+
     const { error } = await supabase.from("todo").update({ task }).eq("id", id);
 
     if (error) {

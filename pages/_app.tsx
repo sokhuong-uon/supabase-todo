@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import "./globals.css";
-import { Layout } from "./layout";
+import Layout from "./layout";
 import type { AppProps } from "next/app";
 import { useSupabase } from "@/hooks/useSupabase";
 import { Todo } from "@/hooks/useTodo";

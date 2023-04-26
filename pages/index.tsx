@@ -17,7 +17,7 @@ export default function Home() {
     setSearchQuery(query);
 
     const filtered = todos.filter((todo) => {
-      return todo.task.toLowerCase().includes(query.toLowerCase());
+      return todo.task.includes(query);
     });
 
     setFilteredTodos(filtered);
@@ -60,7 +60,7 @@ export default function Home() {
       const { data, error } = await supabase
         .from("todo")
         .select()
-        .order("created_at", { ascending: false });
+        .order("task", { ascending: true });
 
       if (error) {
         console.log(error);
@@ -72,7 +72,6 @@ export default function Home() {
     };
 
     fetchData();
-    console.log("fetching data");
   }, []);
 
   const toggle = (id: number, isDone: boolean) => {
@@ -98,9 +97,9 @@ export default function Home() {
 
       <div className="flex flex-col gap-2">
         <ul className="flex flex-col w-full h-full gap-2 ">
-          {searchQuery === "" &&
+          {(searchQuery === "" || isEdit) &&
             todos.map((todo) => (
-              <li key={todo.id}>
+              <li key={todo.id} className={editId === todo.id ? "bg-red-500" : ""}>
                 <TodoCard
                   todo={todo}
                   onDelete={deleteTodo}
@@ -112,8 +111,9 @@ export default function Home() {
             ))}
 
           {searchQuery !== "" &&
+            !isEdit &&
             filteredTodos.map((todo) => (
-              <li key={todo.id}>
+              <li key={todo.id} className={editId === todo.id ? "bg-red-500" : ""}>
                 <TodoCard
                   todo={todo}
                   onDelete={deleteTodo}
@@ -123,7 +123,9 @@ export default function Home() {
                 ></TodoCard>
               </li>
             ))}
-          {searchQuery !== "" && filteredTodos.length === 0 && <li>No match found</li>}
+          {searchQuery !== "" && !isEdit && filteredTodos.length === 0 && (
+            <li>No match found</li>
+          )}
         </ul>
       </div>
     </main>
